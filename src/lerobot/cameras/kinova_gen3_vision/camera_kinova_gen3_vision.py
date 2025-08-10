@@ -20,7 +20,7 @@ if (
     platform.system() == "Windows"
     and "OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS" not in os.environ
 ):
-    os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
+    os.environ["OPENCV_VIDEOI_OMSMF_ENABLE_HW_TRANSFORMS"] = "0"
 
 MAX_OPENCV_INDEX = 60
 

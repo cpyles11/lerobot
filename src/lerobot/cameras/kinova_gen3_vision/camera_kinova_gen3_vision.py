@@ -4,7 +4,6 @@ import os
 import platform
 import time
 
-import cv2
 from kortex_api.autogen.client_stubs.DeviceManagerClientRpc import DeviceManagerClient
 from kortex_api.autogen.client_stubs.VisionConfigClientRpc import VisionConfigClient
 from kortex_api.autogen.messages import DeviceConfig_pb2, VisionConfig_pb2
@@ -20,7 +19,8 @@ if (
     platform.system() == "Windows"
     and "OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS" not in os.environ
 ):
-    os.environ["OPENCV_VIDEOI_OMSMF_ENABLE_HW_TRANSFORMS"] = "0"
+    os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
+import cv2
 
 MAX_OPENCV_INDEX = 60
 

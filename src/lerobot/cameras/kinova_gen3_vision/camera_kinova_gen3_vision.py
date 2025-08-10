@@ -5,11 +5,13 @@ import platform
 import time
 
 import cv2
-from kinova_gen3_vision.configuration_kinova_gen3_vision import KinovaGen3VisionCameraConfig
 from kortex_api.autogen.client_stubs.DeviceManagerClientRpc import DeviceManagerClient
 from kortex_api.autogen.client_stubs.VisionConfigClientRpc import VisionConfigClient
 from kortex_api.autogen.messages import DeviceConfig_pb2, VisionConfig_pb2
 
+from lerobot.cameras.kinova_gen3_vision.configuration_kinova_gen3_vision import (
+    KinovaGen3VisionCameraConfig,
+)
 from lerobot.cameras.opencv.camera_opencv import OpenCVCamera
 from lerobot.errors import DeviceAlreadyConnectedError
 
@@ -23,6 +25,7 @@ if (
 MAX_OPENCV_INDEX = 60
 
 logger = logging.getLogger(__name__)
+
 
 class KinovaGen3VisionCamera(OpenCVCamera):
     def __init__(self, config: KinovaGen3VisionCameraConfig):
@@ -57,7 +60,6 @@ class KinovaGen3VisionCamera(OpenCVCamera):
     def connect(self, vision_config, device_manager, warmup: bool = True):
         if self.is_connected:
             raise DeviceAlreadyConnectedError(f"{self} is already connected.")
-
 
         # TODO: Update to include different resolution and frame_rate settings
         # Note, I couldn't get a constant 30 FPS, it capped at 27, so locking to 15 FPS

@@ -111,6 +111,10 @@ intelrealsense = [
     "pyrealsense2>=2.55.1.6486 ; sys_platform != 'darwin'",
     "pyrealsense2-macosx>=2.54 ; sys_platform == 'darwin'",
 ]
+kinova = [
+    "kortex-api @ file:./kinova/kortex_api-2.5.0.post6-py3-none-any.whl",
+    "protobuf==3.20.0"]
+
 # stretch = [
 #     "hello-robot-stretch-body>=0.7.27 ; sys_platform == 'linux'",
 #     "pyrender @ git+https://github.com/mmatl/pyrender.git ; sys_platform == 'linux'",

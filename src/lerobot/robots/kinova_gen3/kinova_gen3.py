@@ -1,4 +1,3 @@
-
 import logging
 import threading
 import time
@@ -64,12 +63,15 @@ class KinovaGen3(Robot):
 
     @property
     def _motors_ft(self) -> dict[str, type]:
-        #TODO May need to change to not rely on a connection happening first...
+        # TODO May need to change to not rely on a connection happening first...
+        # Joint positions
         measured_joint_angles = self.base.GetMeasuredJointAngles()
         obs_dict = {
-            f"joint_id_{joint_angle.joint_identifier}.pos": joint_angle.value
+            f"joint_id_{joint_angle.joint_identifier}.pos": float
             for joint_angle in measured_joint_angles.joint_angles
         }
+        # gripper position
+        obs_dict["gripper.post"] = float
         return obs_dict
 
     @property
@@ -153,7 +155,6 @@ class KinovaGen3(Robot):
         logger.info(f"{self} connected.")
 
     def get_observation(self) -> dict[str, Any]:
-        # TODO Add gripper
 
         if not self.is_connected:
             raise DeviceNotConnectedError(f"{self} is not connected.")
@@ -165,8 +166,16 @@ class KinovaGen3(Robot):
             f"joint_id_{joint_angle.joint_identifier}.pos": joint_angle.value
             for joint_angle in measured_joint_angles.joint_angles
         }
-        dt_ms = (time.perf_counter() - start) * 1e3
 
+        # Read gripper position
+        gripper_request = Base_pb2.GripperRequest()
+        gripper_request.mode = Base_pb2.GRIPPER_POSITION
+        measured_gripper_position = self.base.GetMeasuredGripperMovement(
+            gripper_request
+        )
+        obs_dict["gripper.post"] = measured_gripper_position.finger[0].value
+
+        dt_ms = (time.perf_counter() - start) * 1e3
         logger.debug(f"{self} read state: {dt_ms:.1f}ms")
 
         # Capture images from cameras
@@ -196,9 +205,10 @@ class KinovaGen3(Robot):
         """
         Apply any one-time or runtime configuration to the robot.
         This may include setting motor parameters, control modes, or initial state.
+
+        For now, relying on user to set and maintain consisten configs, i.e. via web gui, other than camera FPS and resolution
         """
         # TODO:  send to initial position (there should be examples which address this)
-        # TODO: Ensure correct and consistent configuration each time, i.e., if web gui is used to change parameters
 
         # Make sure the arm is in Single Level Servoing mode
         base_servo_mode = Base_pb2.ServoingModeInformation()

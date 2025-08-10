@@ -61,20 +61,6 @@ class KinovaGen3VisionCamera(OpenCVCamera):
         if self.is_connected:
             raise DeviceAlreadyConnectedError(f"{self} is already connected.")
 
-        # TODO: Update to include different resolution and frame_rate settings
-        # Note, I couldn't get a constant 30 FPS, it capped at 27, so locking to 15 FPS
-        if (self.config.width, self.config.height) != (640, 480):
-            raise ValueError(
-                f"Kinova Gen3 vision camera config requires width=640 and height=480; "
-                f"got width={self.config.width!r}, height={self.config.height!r}"
-            )
-
-        if self.config.fps != 15:
-            raise ValueError(
-                f"Kinova Gen3 vision camera config requires fps=15; "
-                f"got fps={self.config.fps!r}"
-            )
-
         self.vision_config = vision_config
         self.device_manager = device_manager  # this needs to be set to get device id
 
@@ -83,9 +69,48 @@ class KinovaGen3VisionCamera(OpenCVCamera):
 
         sensor_settings = VisionConfig_pb2.SensorSettings()
         sensor_settings.sensor = VisionConfig_pb2.SENSOR_COLOR
-        sensor_settings.resolution = VisionConfig_pb2.RESOLUTION_640x480
-        sensor_settings.frame_rate = VisionConfig_pb2.FRAMERATE_15_FPS
         sensor_settings.bit_rate = VisionConfig_pb2.BITRATE_20_MBPS
+
+        # map each (width, height) to the corresponding enum value
+        resolution_map = {
+            (640,  480): VisionConfig_pb2.RESOLUTION_640x480,
+            (320,  240): VisionConfig_pb2.RESOLUTION_320x240,
+            (424,  240): VisionConfig_pb2.RESOLUTION_424x240,
+            (480,  270): VisionConfig_pb2.RESOLUTION_480x270,
+            (1280, 720): VisionConfig_pb2.RESOLUTION_1280x720,
+            (1920, 1080): VisionConfig_pb2.RESOLUTION_1920x1080,
+        }
+
+        requested_resolution = (self.config.width, self.config.height)
+
+        try:
+            sensor_settings.resolution = resolution_map[requested_resolution]
+        except KeyError:
+            allowed = ", ".join(f"{w}×{h}" for w, h in resolution_map)
+            raise ValueError(
+                f"Kinova Gen3 vision camera config requires one of these resolutions: "
+                f"{allowed!r}; got width={self.config.width!r}, "
+                f"height={self.config.height!r}"
+             ) from None
+
+        # Note, I couldn't get a constant 30 FPS, it capped at 27, so locking to 15 FPS
+
+        fps_map = {
+            6: VisionConfig_pb2.FRAMERATE_6_FPS,
+            15: VisionConfig_pb2.FRAMERATE_15_FPS,
+            30: VisionConfig_pb2.FRAMERATE_30_FPS,
+        }
+
+        requested_fps = self.config.fps
+
+        try:
+            sensor_settings.frame_rate = resolution_map[requested_fps]
+        except KeyError:
+            allowed_fps = ", ".join(str(f) for f in fps_map)
+            raise ValueError(
+                f"Kinova Gen3 vision camera config requires one of these FPS values: "
+                f"{allowed_fps!r}; got fps={requested_fps!r}"
+                ) from None
 
         self.vision_config.SetSensorSettings(sensor_settings, vision_device_id)
         time.sleep(1)

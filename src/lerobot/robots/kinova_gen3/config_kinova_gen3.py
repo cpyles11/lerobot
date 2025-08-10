@@ -33,13 +33,13 @@ class KinovaGen3Config(RobotConfig):
         default_factory={
             "wrist": KinovaGen3VisionCameraConfig(
                 index_or_path="rtsp://192.168.1.10/color",
-                fps=30.0,
+                fps=30,
                 width=640,
                 height=480,
             ),
             "top": OpenCVCameraConfig(
                 index_or_path="/dev0/video0",
-                fps=30.0,
+                fps=30,
                 width=640,
                 height=480,
             ),

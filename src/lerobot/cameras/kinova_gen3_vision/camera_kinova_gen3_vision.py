@@ -8,11 +8,12 @@ from kortex_api.autogen.client_stubs.DeviceManagerClientRpc import DeviceManager
 from kortex_api.autogen.client_stubs.VisionConfigClientRpc import VisionConfigClient
 from kortex_api.autogen.messages import DeviceConfig_pb2, VisionConfig_pb2
 
-from lerobot.cameras.kinova_gen3_vision.configuration_kinova_gen3_vision import (
+from lerobot.errors import DeviceAlreadyConnectedError
+
+from ..opencv.camera_opencv import OpenCVCamera
+from .configuration_kinova_gen3_vision import (
     KinovaGen3VisionCameraConfig,
 )
-from lerobot.cameras.opencv.camera_opencv import OpenCVCamera
-from lerobot.errors import DeviceAlreadyConnectedError
 
 # Fix MSMF hardware transform compatibility for Windows before importing cv2
 if (

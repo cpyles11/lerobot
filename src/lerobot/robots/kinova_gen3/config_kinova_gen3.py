@@ -2,9 +2,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from lerobot.cameras import CameraConfig
-from lerobot.cameras.kinova_gen3_vision.configuration_kinova_gen3_vision import KinovaGen3VisionCameraConfig
+from lerobot.cameras.kinova_gen3_vision.configuration_kinova_gen3_vision import (
+    KinovaGen3VisionCameraConfig,
+)
 from lerobot.cameras.opencv import OpenCVCameraConfig
-from lerobot.robots import RobotConfig
+
+from ..config import RobotConfig
 
 
 @RobotConfig.register_subclass("kinova_gen3")
@@ -30,10 +33,10 @@ class KinovaGen3Config(RobotConfig):
     speed: float = 20.0
 
     cameras: dict[str, CameraConfig] = field(
-        default_factory={
+        default_factory=lambda: {
             "wrist": KinovaGen3VisionCameraConfig(
                 index_or_path="rtsp://192.168.1.10/color",
-                fps=30,
+                fps=15,
                 width=640,
                 height=480,
             ),

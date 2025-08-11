@@ -15,8 +15,9 @@ from kortex_api.TCPTransport import TCPTransport
 
 from lerobot.cameras.utils import make_cameras_from_configs
 from lerobot.errors import DeviceAlreadyConnectedError, DeviceNotConnectedError
-from lerobot.robots import Robot
-from lerobot.robots.kinova_gen3.config_kinova_gen3 import KinovaGen3Config
+
+from ..robot import Robot
+from .config_kinova_gen3 import KinovaGen3Config
 
 
 # Create closure to set an event after an END or an ABORT
@@ -63,13 +64,18 @@ class KinovaGen3(Robot):
 
     @property
     def _motors_ft(self) -> dict[str, type]:
-        # TODO May need to change to not rely on a connection happening first...
+        # TODO Hard coded, is there a better way to do this without running connect first?
         # Joint positions
-        measured_joint_angles = self.base.GetMeasuredJointAngles()
         obs_dict = {
-            f"joint_id_{joint_angle.joint_identifier}.pos": float
-            for joint_angle in measured_joint_angles.joint_angles
+            "joint_id_0.pos": float,
+            "joint_id_1.pos": float,
+            "joint_id_2.pos": float,
+            "joint_id_3.pos": float,
+            "joint_id_4.pos": float,
+            "joint_id_5.pos": float,
+            "joint_id_6.pos": float
         }
+
         # gripper position
         obs_dict["gripper.post"] = float
         return obs_dict
@@ -104,7 +110,16 @@ class KinovaGen3(Robot):
 
         Note: this property should be able to be called regardless of whether the robot is connected or not.
         """
-        pass
+        # TODO: THIS WILL BE UDDATED
+        return {
+            "joint_id_0.pos": float,
+            "joint_id_1.pos": float,
+            "joint_id_2.pos": float,
+            "joint_id_3.pos": float,
+            "joint_id_4.pos": float,
+            "joint_id_5.pos": float,
+            "joint_id_6.pos": float,
+        }
 
     @property
     def is_connected(self) -> bool:

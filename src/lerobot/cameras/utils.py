@@ -39,7 +39,7 @@ def make_cameras_from_configs(camera_configs: dict[str, CameraConfig]) -> dict[s
             cameras[key] = RealSenseCamera(cfg)
 
         elif cfg.type == "kinova_gen3_vision":
-            from kinova_gen3_vision.camera_kinova_gen3_vision import KinovaGen3VisionCamera
+            from .kinova_gen3_vision.camera_kinova_gen3_vision import KinovaGen3VisionCamera
 
             cameras[key] = KinovaGen3VisionCamera(cfg)
         else:

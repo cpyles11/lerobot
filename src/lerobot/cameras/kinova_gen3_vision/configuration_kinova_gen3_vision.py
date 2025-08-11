@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from lerobot.cameras import CameraConfig, ColorMode, Cv2Rotation
+from ..configs import CameraConfig, ColorMode, Cv2Rotation
 
 
 @CameraConfig.register_subclass("kinova_gen3_vision")
@@ -10,7 +10,7 @@ class KinovaGen3VisionCameraConfig(CameraConfig):
 
     index_or_path: int | Path = "rtsp://192.168.1.10/color"
 
-    fps: int = 30
+    fps: int = 15
     width: int = 640
     height: int = 480
 

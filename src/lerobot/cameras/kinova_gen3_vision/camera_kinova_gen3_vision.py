@@ -74,10 +74,10 @@ class KinovaGen3VisionCamera(OpenCVCamera):
 
         # map each (width, height) to the corresponding enum value
         resolution_map = {
-            (640,  480): VisionConfig_pb2.RESOLUTION_640x480,
-            (320,  240): VisionConfig_pb2.RESOLUTION_320x240,
-            (424,  240): VisionConfig_pb2.RESOLUTION_424x240,
-            (480,  270): VisionConfig_pb2.RESOLUTION_480x270,
+            (640, 480): VisionConfig_pb2.RESOLUTION_640x480,
+            (320, 240): VisionConfig_pb2.RESOLUTION_320x240,
+            (424, 240): VisionConfig_pb2.RESOLUTION_424x240,
+            (480, 270): VisionConfig_pb2.RESOLUTION_480x270,
             (1280, 720): VisionConfig_pb2.RESOLUTION_1280x720,
             (1920, 1080): VisionConfig_pb2.RESOLUTION_1920x1080,
         }
@@ -92,7 +92,7 @@ class KinovaGen3VisionCamera(OpenCVCamera):
                 f"Kinova Gen3 vision camera config requires one of these resolutions: "
                 f"{allowed!r}; got width={self.config.width!r}, "
                 f"height={self.config.height!r}"
-             ) from None
+            ) from None
 
         # Note, I couldn't get a constant 30 FPS, it capped at 27, so locking to 15 FPS
 
@@ -105,16 +105,18 @@ class KinovaGen3VisionCamera(OpenCVCamera):
         requested_fps = self.config.fps
 
         try:
-            sensor_settings.frame_rate = resolution_map[requested_fps]
+            sensor_settings.frame_rate = fps_map[requested_fps]
         except KeyError:
             allowed_fps = ", ".join(str(f) for f in fps_map)
             raise ValueError(
                 f"Kinova Gen3 vision camera config requires one of these FPS values: "
                 f"{allowed_fps!r}; got fps={requested_fps!r}"
-                ) from None
+            ) from None
 
         self.vision_config.SetSensorSettings(sensor_settings, vision_device_id)
         time.sleep(1)
+
+        # TODO: Set focus and/or disable auto-focus
 
         # Use 1 thread for OpenCV operations to avoid potential conflicts or
         # blocking in multi-threaded applications, especially during data collection.

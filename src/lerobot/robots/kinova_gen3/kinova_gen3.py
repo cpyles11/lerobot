@@ -77,7 +77,7 @@ class KinovaGen3(Robot):
         }
 
         # gripper position
-        obs_dict["gripper.post"] = float
+        obs_dict["gripper.pos"] = float
         return obs_dict
 
     @property
@@ -111,15 +111,16 @@ class KinovaGen3(Robot):
         Note: this property should be able to be called regardless of whether the robot is connected or not.
         """
         # TODO: THIS WILL BE UDDATED
-        return {
+        action_dict = {
             "joint_id_0.pos": float,
             "joint_id_1.pos": float,
             "joint_id_2.pos": float,
             "joint_id_3.pos": float,
             "joint_id_4.pos": float,
             "joint_id_5.pos": float,
-            "joint_id_6.pos": float,
+            "joint_id_6.pos": float
         }
+        return action_dict
 
     @property
     def is_connected(self) -> bool:
@@ -188,7 +189,7 @@ class KinovaGen3(Robot):
         measured_gripper_position = self.base.GetMeasuredGripperMovement(
             gripper_request
         )
-        obs_dict["gripper.post"] = measured_gripper_position.finger[0].value
+        obs_dict["gripper.pos"] = measured_gripper_position.finger[0].value
 
         dt_ms = (time.perf_counter() - start) * 1e3
         logger.debug(f"{self} read state: {dt_ms:.1f}ms")
@@ -273,7 +274,8 @@ class KinovaGen3(Robot):
             dict[str, Any]: The action actually sent to the motors potentially clipped or modified, e.g. by
                 safety limits on velocity.
         """
-        pass
+        # TODO: Will be updated
+        return action
 
     def disconnect(self) -> None:
         """Disconnect from the robot and perform any necessary cleanup."""

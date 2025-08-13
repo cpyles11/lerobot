@@ -65,5 +65,9 @@ def make_teleoperator_from_config(config: TeleoperatorConfig) -> Teleoperator:
         from .bi_so100_leader import BiSO100Leader
 
         return BiSO100Leader(config)
+    elif config.type == "kinova_gen3_teleop_no_op":
+        from .kinova_gen3_teleop_no_op import KinovaGen3TeleopNoOp
+
+        return KinovaGen3TeleopNoOp(config)
     else:
         raise ValueError(config.type)
